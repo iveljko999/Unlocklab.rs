@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unlock Lab Car Coding | Dijagnostika i Kodiranje Vozila — Vranje</title>
+<meta name="description" content="Specijalizovana laboratorija za kodiranje, dijagnostiku i aktivaciju skrivenih funkcija vozila u Vranju. ECU programiranje, retrofit ugradnje, softverske aktivacije.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #000000;
+  --white: #FFFFFF;
+  --neon: #39FF14;
+  --neon-dim: rgba(57,255,20,0.12);
+  --neon-glow: 0 0 20px rgba(57,255,20,0.5), 0 0 40px rgba(57,255,20,0.25);
+  --neon-glow-sm: 0 0 12px rgba(57,255,20,0.4);
+  --glass: rgba(255,255,255,0.03);
+  --glass-border: rgba(57,255,20,0.18);
+  --surface: #080808;
+  --card: #0d0d0d;
+  --muted: rgba(255,255,255,0.55);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#050505}
+::-webkit-scrollbar-thumb{background:var(--neon);border-radius:3px}
+
+/* ── NAV ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 64px;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(57,255,20,0.08);
+  transition:padding .3s,background .3s;
+}
+#nav.scrolled{padding:13px 64px;background:rgba(0,0,0,0.96)}
+.nav-logo{
+  font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;
+  letter-spacing:3px;text-decoration:none;color:var(--white);
+  text-transform:uppercase;
+}
+.nav-logo em{color:var(--neon);font-style:normal}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{
+  color:rgba(255,255,255,0.6);text-decoration:none;
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;
+  transition:color .25s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--neon)}
+.nav-btn{
+  background:transparent;border:1px solid var(--neon);color:var(--neon);
+  padding:10px 26px;font-family:'Montserrat',sans-serif;font-weight:700;
+  font-size:11px;letter-spacing:2.5px;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;transition:all .3s;white-space:nowrap;
+}
+.nav-btn:hover{background:var(--neon);color:var(--black);box-shadow:var(--neon-glow)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.burger span{display:block;width:24px;height:2px;background:var(--neon);transition:all .3s}
+
+/* ── MOBILE MENU ── */
+#mob-menu{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,0.98);
+  flex-direction:column;align-items:center;justify-content:center;gap:36px;
+}
+#mob-menu.open{display:flex}
+#mob-menu a{
+  font-family:'Montserrat',sans-serif;font-weight:800;font-size:26px;
+  color:var(--white);text-decoration:none;letter-spacing:3px;text-transform:uppercase;
+  transition:color .25s;
+}
+#mob-menu a:hover{color:var(--neon)}
+.mob-close{
+  position:absolute;top:28px;right:28px;background:none;border:none;
+  color:rgba(255,255,255,0.6);font-size:28px;cursor:pointer;transition:color .25s;
+}
+.mob-close:hover{color:var(--neon)}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;background:var(--black);
+}
+.h-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 55%, rgba(57,255,20,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(57,255,20,0.04) 0%, transparent 50%),
+    #000;
+}
+.h-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(57,255,20,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(57,255,20,0.04) 1px,transparent 1px);
+  background-size:55px 55px;
+  mask-image:radial-gradient(ellipse 80% 70% at center,black 20%,transparent 80%);
+}
+.h-scan{
+  position:absolute;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent 0%,rgba(57,255,20,0.5) 50%,transparent 100%);
+  animation:scan 5s linear infinite;
+}
+@keyframes scan{0%{top:-1px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100%;opacity:0}}
+.h-content{
+  position:relative;z-index:2;text-align:center;
+  max-width:940px;padding:0 24px;padding-top:80px;
+}
+.h-badge{
+  display:inline-flex;align-items:center;gap:9px;
+  background:rgba(57,255,20,0.08);border:1px solid rgba(57,255,20,0.28);
+  padding:8px 22px;margin-bottom:36px;
+  font-size:10px;letter-spacing:3.5px;text-transform:uppercase;
+  color:var(--neon);font-weight:700;
+}
+.h-badge i{
+  width:7px;height:7px;background:var(--neon);border-radius:50%;
+  animation:blink 2s ease infinite;
+}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.h-title{
+  font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:clamp(52px,9vw,100px);line-height:.92;
+  letter-spacing:-3px;margin-bottom:12px;
+}
+.h-title em{color:var(--neon);font-style:normal;text-shadow:var(--neon-glow)}
+.h-sub{
+  font-family:'Montserrat',sans-serif;font-weight:800;
+  font-size:clamp(14px,2.5vw,22px);letter-spacing:6px;
+  color:rgba(255,255,255,0.75);margin-bottom:28px;text-transform:uppercase;
+}
+.h-tag{
+  font-size:clamp(14px,1.6vw,18px);color:rgba(255,255,255,0.55);
+  font-weight:300;line-height:1.65;max-width:680px;margin:0 auto 52px;
+  letter-spacing:.2px;
+}
+.h-btns{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.btn-p{
+  background:var(--neon);color:var(--black);
+  padding:17px 50px;font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  border:none;cursor:pointer;text-decoration:none;display:inline-block;
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition:all .3s;
+}
+.btn-p:hover{background:#fff;box-shadow:0 0 50px rgba(57,255,20,.7);transform:translateY(-2px)}
+.btn-s{
+  background:transparent;color:rgba(255,255,255,.8);
+  padding:17px 50px;font-family:'Montserrat',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.22);cursor:pointer;text-decoration:none;
+  display:inline-block;transition:all .3s;
+}
+.btn-s:hover{border-color:var(--neon);color:var(--neon)}
+.h-stats{
+  position:absolute;bottom:52px;left:0;right:0;
+  display:flex;justify-content:center;gap:72px;z-index:2;flex-wrap:wrap;
+  padding:0 24px;
+}
+.stat{text-align:center}
+.stat-n{
+  font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:clamp(26px,4vw,40px);color:var(--neon);line-height:1;
+}
+.stat-l{
+  font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-top:6px;
+}
+
+/* ── SHARED SECTION STYLES ── */
+.sec{padding:120px 64px;position:relative}
+.sec-dark{background:var(--surface)}
+.sec-black{background:var(--black)}
+.sec-dark::before,.sec-dark::after{
+  content:'';position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(57,255,20,.18),transparent);
+}
+.sec-dark::before{top:0}
+.sec-dark::after{bottom:0}
+.sec-head{text-align:center;margin-bottom:80px}
+.sec-label{
+  display:inline-block;color:var(--neon);
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  font-weight:700;margin-bottom:16px;
+}
+.sec-title{
+  font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:clamp(34px,5vw,62px);line-height:1.02;letter-spacing:-1.5px;
+}
+.sec-title em{color:var(--neon);font-style:normal}
+.sec-line{
+  width:56px;height:3px;background:var(--neon);
+  margin:22px auto 0;box-shadow:var(--neon-glow-sm);
+}
+.inner{max-width:1200px;margin:0 auto}
+
+/* ── ABOUT ── */
+.about-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.about-lbl{color:var(--neon);font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:14px}
+.about-h{
+  font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:clamp(28px,4vw,48px);line-height:1.05;
+  letter-spacing:-1px;margin-bottom:32px;
+}
+.about-h em{color:var(--neon);font-style:normal}
+.about-p{color:var(--muted);font-size:15px;line-height:1.85;margin-bottom:22px}
+.about-p:last-of-type{margin-bottom:0}
+.about-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(10px);padding:40px;position:relative;overflow:hidden;
+}
+.about-card::before{
+  content:'';position:absolute;top:0;left:0;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--neon),transparent);
+}
+.about-ghost{
+  font-family:'Montserrat',sans-serif;font-weight:900;font-size:90px;
+  color:rgba(57,255,20,.05);line-height:1;
+  position:absolute;top:16px;right:20px;pointer-events:none;
+}
+.af{display:flex;align-items:flex-start;gap:16px;margin-bottom:28px}
+.af:last-child{margin-bottom:0}
+.af-icon{
+  width:44px;height:44px;flex-shrink:0;
+  background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.25);
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+}
+.af-t{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;margin-bottom:4px}
+.af-d{font-size:12.5px;color:rgba(255,255,255,.45);line-height:1.55}
+
+/* ── SERVICES ── */
+.srv-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+}
+.srv{
+  background:var(--card);border:1px solid rgba(255,255,255,.05);
+  padding:48px 38px;position:relative;overflow:hidden;
+  cursor:default;transition:all .35s;
+}
+.srv::after{
+  content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;
+  background:var(--neon);transform:scaleX(0);transform-origin:left;
+  transition:transform .4s;
+}
+.srv:hover{
+  border-color:rgba(57,255,20,.2);
+  transform:translateY(-5px);background:#111;
+}
+.srv:hover::after{transform:scaleX(1)}
+.srv-num{
+  font-family:'Montserrat',sans-serif;font-weight:900;font-size:72px;
+  color:rgba(57,255,20,.05);position:absolute;top:14px;right:20px;line-height:1;
+}
+.srv-ico{
+  width:54px;height:54px;background:rgba(57,255,20,.07);
+  border:1px solid rgba(57,255,20,.18);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:24px;font-size:24px;transition:all .3s;
+}
+.srv:hover .srv-ico{
+  background:rgba(57,255,20,.15);border-color:var(--neon);
+  box-shadow:0 0 20px rgba(57,255,20,.2);
+}
+.srv-t{
+  font-family:'Montserrat',sans-serif;font-weight:800;font-size:17px;
+  margin-bottom:14px;letter-spacing:-.3px;
+}
+.srv-d{font-size:13.5px;color:var(--muted);line-height:1.72}
+
+/* ── WHY ── */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.why{
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+  padding:48px 28px;text-align:center;position:relative;
+  overflow:hidden;transition:all .35s;
+}
+.why::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:56px;height:2px;background:var(--neon);box-shadow:var(--neon-glow-sm);
+}
+.why:hover{
+  border-color:rgba(57,255,20,.22);transform:translateY(-7px);
+  background:rgba(57,255,20,.025);
+}
+.why-ico{
+  width:70px;height:70px;border-radius:50%;
+  background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.2);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 28px;font-size:28px;transition:all .3s;
+}
+.why:hover .why-ico{
+  background:rgba(57,255,20,.15);border-color:var(--neon);
+  box-shadow:0 0 30px rgba(57,255,20,.25);
+}
+.why-t{font-family:'Montserrat',sans-serif;font-weight:800;font-size:16px;margin-bottom:14px;letter-spacing:-.2px}
+.why-d{font-size:13.5px;color:var(--muted);line-height:1.72}
+
+/* ── GALLERY ── */
+.gal-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:auto auto;
+  gap:4px;
+}
+.gal-item{position:relative;overflow:hidden;aspect-ratio:4/3;cursor:pointer}
+.gal-item:first-child{grid-column:span 2;aspect-ratio:16/9}
+.gal-item img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .6s ease,filter .4s;
+  filter:grayscale(25%) brightness(.78);
+}
+.gal-item:hover img{transform:scale(1.07);filter:grayscale(0%) brightness(1)}
+.gal-ov{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.82) 0%,transparent 55%);
+  opacity:0;transition:opacity .35s;
+  display:flex;align-items:flex-end;padding:22px;
+}
+.gal-item:hover .gal-ov{opacity:1}
+.gal-ov span{
+  font-family:'Montserrat',sans-serif;font-weight:700;
+  font-size:13px;letter-spacing:1.5px;color:#fff;text-transform:uppercase;
+}
+
+/* ── LOCATION ── */
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.map-wrap{position:relative}
+.map-wrap::after{
+  content:'';position:absolute;inset:-1px;pointer-events:none;z-index:1;
+  border:1px solid rgba(57,255,20,.3);
+  box-shadow:0 0 0 1px rgba(57,255,20,.08),inset 0 0 0 1px rgba(57,255,20,.08);
+}
+.map-wrap iframe{
+  width:100%;height:460px;border:none;display:block;
+  filter:grayscale(100%) invert(93%) hue-rotate(176deg) brightness(.65) contrast(1.12) saturate(.8);
+}
+.loc-row{
+  display:flex;align-items:flex-start;gap:20px;
+  padding:28px 0;border-bottom:1px solid rgba(255,255,255,.07);
+}
+.loc-row:first-child{padding-top:0}
+.loc-row:last-child{border-bottom:none}
+.loc-ico{
+  width:48px;height:48px;flex-shrink:0;
+  background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.25);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.loc-lbl{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--neon);font-weight:700;margin-bottom:7px}
+.loc-val{font-size:15px;line-height:1.6}
+
+/* ── CONTACT ── */
+.con-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:80px}
+.con-h{
+  font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:clamp(26px,3.5vw,40px);line-height:1.08;margin-bottom:20px;
+}
+.con-h em{color:var(--neon);font-style:normal}
+.con-p{font-size:15px;color:var(--muted);line-height:1.72;margin-bottom:44px}
+.con-row{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+.con-ico{
+  width:44px;height:44px;flex-shrink:0;
+  background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.25);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  transition:all .3s;
+}
+.con-row:hover .con-ico{background:rgba(57,255,20,.18);box-shadow:0 0 16px rgba(57,255,20,.18)}
+.con-il{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--neon);font-weight:700;margin-bottom:3px}
+.con-iv{font-size:15px}
+.socials{display:flex;gap:10px;margin-top:38px}
+.soc{
+  width:44px;height:44px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;color:rgba(255,255,255,.45);transition:all .3s;
+}
+.soc:hover{border-color:var(--neon);color:var(--neon);background:rgba(57,255,20,.07);box-shadow:0 0 16px rgba(57,255,20,.12)}
+.form-box{
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+  padding:52px;position:relative;
+}
+.form-box::before{
+  content:'';position:absolute;top:0;left:0;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--neon),rgba(57,255,20,.1));
+}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.fg{margin-bottom:20px}
+.fg label{
+  display:block;font-size:10px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--neon);font-weight:700;margin-bottom:9px;
+}
+.fg input,.fg textarea{
+  width:100%;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.1);color:var(--white);
+  padding:13px 17px;font-family:'Inter',sans-serif;font-size:14px;
+  outline:none;transition:all .3s;
+}
+.fg input::placeholder,.fg textarea::placeholder{color:rgba(255,255,255,.22)}
+.fg input:focus,.fg textarea:focus{
+  border-color:var(--neon);background:rgba(57,255,20,.025);
+  box-shadow:0 0 18px rgba(57,255,20,.06);
+}
+.fg textarea{resize:vertical;min-height:128px}
+.btn-send{
+  width:100%;background:var(--neon);color:var(--black);
+  padding:17px;font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  border:none;cursor:pointer;transition:all .3s;
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+}
+.btn-send:hover{background:#fff;box-shadow:0 0 40px rgba(57,255,20,.5);transform:translateY(-2px)}
+
+/* ── FOOTER ── */
+footer{
+  background:#030303;padding:44px 64px;
+  border-top:1px solid rgba(57,255,20,.1);
+}
+.foot-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:18px;
+}
+.foot-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:17px;letter-spacing:2px}
+.foot-logo em{color:var(--neon);font-style:normal}
+.foot-copy{font-size:12.5px;color:rgba(255,255,255,.28)}
+.foot-links{display:flex;gap:28px}
+.foot-links a{
+  font-size:11px;color:rgba(255,255,255,.3);text-decoration:none;
+  letter-spacing:1.5px;text-transform:uppercase;transition:color .25s;
+}
+.foot-links a:hover{color:var(--neon)}
+
+/* ── ANIMATIONS ── */
+.fi{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.fi.on{opacity:1;transform:translateY(0)}
+.stg>*{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
+.stg.on>*:nth-child(1){opacity:1;transform:translateY(0);transition-delay:.08s}
+.stg.on>*:nth-child(2){opacity:1;transform:translateY(0);transition-delay:.18s}
+.stg.on>*:nth-child(3){opacity:1;transform:translateY(0);transition-delay:.28s}
+.stg.on>*:nth-child(4){opacity:1;transform:translateY(0);transition-delay:.38s}
+.stg.on>*:nth-child(5){opacity:1;transform:translateY(0);transition-delay:.48s}
+.stg.on>*:nth-child(6){opacity:1;transform:translateY(0);transition-delay:.58s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .sec{padding:100px 40px}
+  #nav,#nav.scrolled{padding:18px 40px}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .srv-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .about-grid,.loc-grid,.con-grid{grid-template-columns:1fr;gap:48px}
+  .nav-links,.nav-btn{display:none}
+  .burger{display:flex}
+}
+@media(max-width:700px){
+  .sec{padding:80px 22px}
+  #nav,#nav.scrolled{padding:16px 22px}
+  footer{padding:38px 22px}
+  .foot-inner{flex-direction:column;text-align:center}
+  .h-stats{gap:32px;bottom:36px}
+  .gal-grid{grid-template-columns:1fr 1fr}
+  .gal-item:first-child{grid-column:span 2;aspect-ratio:16/9}
+  .form-box{padding:32px 22px}
+  .f-row{grid-template-columns:1fr}
+  .why-grid{grid-template-columns:repeat(2,1fr);gap:18px}
+}
+@media(max-width:480px){
+  .why-grid{grid-template-columns:1fr}
+  .gal-grid{grid-template-columns:1fr}
+  .gal-item:first-child{grid-column:span 1;aspect-ratio:4/3}
+  .h-stats{gap:20px}
+  .stat-n{font-size:24px}
+  .srv-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">UNLOCK <em>LAB</em></a>
+  <ul class="nav-links">
+    <li><a href="#about">O Nama</a></li>
+    <li><a href="#services">Usluge</a></li>
+    <li><a href="#gallery">Galerija</a></li>
+    <li><a href="#location">Lokacija</a></li>
+    <li><a href="#contact">Kontakt</a></li>
+  </ul>
+  <a href="#contact" class="nav-btn">Zakaži Termin</a>
+  <button class="burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div id="mob-menu">
+  <button class="mob-close" id="mob-close">✕</button>
+  <a href="#about" onclick="closeMob()">O Nama</a>
+  <a href="#services" onclick="closeMob()">Usluge</a>
+  <a href="#gallery" onclick="closeMob()">Galerija</a>
+  <a href="#location" onclick="closeMob()">Lokacija</a>
+  <a href="#contact" onclick="closeMob()">Kontakt</a>
+  <a href="#contact" onclick="closeMob()" style="color:var(--neon)">Zakaži Termin</a>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section id="hero">
+  <div class="h-bg"></div>
+  <div class="h-grid"></div>
+  <div class="h-scan"></div>
+
+  <div class="h-content">
+    <div class="h-badge"><i></i>Automotive Car Coding Lab · Vranje, Srbija</div>
+    <h1 class="h-title">UNLOCK<br><em>LAB</em></h1>
+    <div class="h-sub">Car Coding</div>
+    <p class="h-tag">Napredna dijagnostika, kodiranje i aktivacija funkcija za moderna vozila</p>
+    <div class="h-btns">
+      <a href="#contact" class="btn-p">Zakaži Termin</a>
+      <a href="#services" class="btn-s">Naše Usluge</a>
+    </div>
+  </div>
+
+  <div class="h-stats">
+    <div class="stat"><div class="stat-n" data-target="500" data-suffix="+">0+</div><div class="stat-l">Vozila</div></div>
+    <div class="stat"><div class="stat-n" data-target="100" data-suffix="%">0%</div><div class="stat-l">Zadovoljnih Klijenata</div></div>
+    <div class="stat"><div class="stat-n" data-target="6" data-suffix="+">0+</div><div class="stat-l">Usluga</div></div>
+    <div class="stat"><div class="stat-n" data-target="2026" data-suffix="">2026</div><div class="stat-l">Osnovano</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     ABOUT
+═══════════════════════════════════════ -->
+<section id="about" class="sec sec-dark">
+  <div class="inner about-grid">
+
+    <div class="fi">
+      <div class="about-lbl">O Nama</div>
+      <h2 class="about-h">Specijalizovana<br><em>Coding Laboratorija</em></h2>
+      <p class="about-p">Unlock Lab Car Coding je specijalizovana laboratorija za kodiranje i dijagnostiku vozila, osnovana 2026. godine u Vranju, Srbija. Naša misija je pružanje najnaprednijih tehničkih usluga za moderna vozila koristeći vrhunsku dijagnostičku opremu i originalne softvere. Fokusirani smo na kodiranje modula, aktivaciju skrivenih funkcija i ECU programiranje za sve premium marke vozila.</p>
+      <p class="about-p">Sa timom iskusnih tehničara i najmodernijom opremom, nudimo profesionalan i precizan pristup svakom vozilu. Naša ekspertiza obuhvata retrofit ugradnje, softverske aktivacije, kalibraciju sistema i naprednu personalizaciju. Svaki zahvat izvodi se odgovorno, uz potpunu pažnju na bezbednost i dugoročne performanse vašeg automobila.</p>
+    </div>
+
+    <div class="fi">
+      <div class="about-card">
+        <div class="about-ghost">01</div>
+        <div class="af">
+          <div class="af-icon">⚡</div>
+          <div><div class="af-t">ECU Programiranje</div><div class="af-d">Profesionalno programiranje upravljačkih jedinica za optimalne performanse</div></div>
+        </div>
+        <div class="af">
+          <div class="af-icon">🔬</div>
+          <div><div class="af-t">Napredna Dijagnostika</div><div class="af-d">Kompletna analiza svih sistema vozila najnaprednijom opremom</div></div>
+        </div>
+        <div class="af">
+          <div class="af-icon">🔧</div>
+          <div><div class="af-t">Retrofit Ugradnje</div><div class="af-d">Ugradnja i aktivacija fabrički dostupnih opcija i sistema</div></div>
+        </div>
+        <div class="af">
+          <div class="af-icon">💻</div>
+          <div><div class="af-t">Softverske Aktivacije</div><div class="af-d">Aktivacija skrivenih i premium funkcija vašeg vozila</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SERVICES
+═══════════════════════════════════════ -->
+<section id="services" class="sec sec-black">
+  <div class="sec-head fi">
+    <span class="sec-label">Šta Nudimo</span>
+    <h2 class="sec-title">Naše <em>Usluge</em></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="inner srv-grid stg">
+
+    <div class="srv">
+      <div class="srv-num">01</div>
+      <div class="srv-ico">🔍</div>
+      <h3 class="srv-t">Dijagnostika Vozila</h3>
+      <p class="srv-d">Kompletna dijagnostika svih sistema — motor, transmisija, ABS, ESP, airbag, klima i sve ostale upravljačke jedinice. Precizna identifikacija grešaka uz detaljan izveštaj.</p>
+    </div>
+
+    <div class="srv">
+      <div class="srv-num">02</div>
+      <div class="srv-ico">💻</div>
+      <h3 class="srv-t">Kodiranje Modula</h3>
+      <p class="srv-d">Profesionalno kodiranje i adaptacija elektronskih modula vozila. Prilagođavanje parametara rada prema specifičnim zahtevima i standardima proizvođača.</p>
+    </div>
+
+    <div class="srv">
+      <div class="srv-num">03</div>
+      <div class="srv-ico">⚡</div>
+      <h3 class="srv-t">Aktivacija Skrivenih Funkcija</h3>
+      <p class="srv-d">Otkrijte funkcije koje su fabrički dostupne ali nisu aktivirane — video u pokretu, ambient osvetljenje, sportski HUD, komfortno zatvaranje i mnogo više.</p>
+    </div>
+
+    <div class="srv">
+      <div class="srv-num">04</div>
+      <div class="srv-ico">🔧</div>
+      <h3 class="srv-t">Retrofit Ugradnje</h3>
+      <p class="srv-d">Naknadna ugradnja originalnih fabričkih opcija — kamera, senzora, sistema za podršku vožnje, digitalnih instrumenta i premium infotainment sistema.</p>
+    </div>
+
+    <div class="srv">
+      <div class="srv-num">05</div>
+      <div class="srv-ico">🖥️</div>
+      <h3 class="srv-t">ECU Programiranje</h3>
+      <p class="srv-d">Profesionalno programiranje i ažuriranje upravljačkih jedinica. Instalacija softverskih update-ova, prilagođavanje mapa i optimizacija rada motora i transmisije.</p>
+    </div>
+
+    <div class="srv">
+      <div class="srv-num">06</div>
+      <div class="srv-ico">✅</div>
+      <h3 class="srv-t">Brisanje Grešaka i Kalibracija</h3>
+      <p class="srv-d">Profesionalno brisanje grešaka i kalibracija senzora, kamera, volana, vešanja i svih sistema koji zahtevaju precizno podešavanje nakon servisnih zahvata.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     WHY CHOOSE US
+═══════════════════════════════════════ -->
+<section id="why" class="sec sec-dark">
+  <div class="sec-head fi">
+    <span class="sec-label">Naše Prednosti</span>
+    <h2 class="sec-title">Zašto Nas <em>Izabrati</em></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="inner why-grid stg">
+
+    <div class="why">
+      <div class="why-ico">🏆</div>
+      <h3 class="why-t">Profesionalna Oprema</h3>
+      <p class="why-d">Koristimo najsavremeniju dijagnostičku opremu — ODIS, ISTA, VCDS, WinKFP i druge profesionalne alate koji garantuju preciznost i pouzdanost.</p>
+    </div>
+
+    <div class="why">
+      <div class="why-ico">⚡</div>
+      <h3 class="why-t">Brza Usluga</h3>
+      <p class="why-d">Vredujemo vaše vreme. Većina usluga se obavlja u roku od 1–2 sata. Fleksibilni smo po pitanju termina i prilagođavamo se vašem rasporedu.</p>
+    </div>
+
+    <div class="why">
+      <div class="why-ico">👨‍💻</div>
+      <h3 class="why-t">Iskusni Tehničari</h3>
+      <p class="why-d">Naš tim su stručnjaci sa godinama iskustva u radu sa premium vozilima. Kontinuirano pratimo najnovije tehnologije i softverske novitete.</p>
+    </div>
+
+    <div class="why">
+      <div class="why-ico">🛡️</div>
+      <h3 class="why-t">Garancija Kvaliteta</h3>
+      <p class="why-d">Sve naše usluge dolaze sa garancijom. Koristimo isključivo originalne softvere i proverene procedure koje ne ugrožavaju bezbednost vašeg vozila.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     GALLERY
+═══════════════════════════════════════ -->
+<section id="gallery" class="sec sec-black">
+  <div class="sec-head fi">
+    <span class="sec-label">Naš Rad</span>
+    <h2 class="sec-title">Galerija</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="inner gal-grid">
+    <div class="gal-item">
+      <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80" alt="Luksuzno vozilo" loading="lazy">
+      <div class="gal-ov"><span>Premium Vozila</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80" alt="Digitalni kokpit" loading="lazy">
+      <div class="gal-ov"><span>Digitalni Kokpit</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Sportski automobil" loading="lazy">
+      <div class="gal-ov"><span>Sportska Vozila</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80" alt="Auto enterijer" loading="lazy">
+      <div class="gal-ov"><span>Detalji Enterijera</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&q=80" alt="Automotive tehnologija" loading="lazy">
+      <div class="gal-ov"><span>Automotive Tehnologija</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80" alt="Workshop" loading="lazy">
+      <div class="gal-ov"><span>Naša Laboratorija</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     LOCATION
+═══════════════════════════════════════ -->
+<section id="location" class="sec sec-dark">
+  <div class="sec-head fi">
+    <span class="sec-label">Gde Smo</span>
+    <h2 class="sec-title">Lokacija</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="inner loc-grid">
+
+    <div class="map-wrap fi">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d46757.82726395424!2d21.863659!3d42.551015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4755c7f50d52fbbd%3A0x1ad1d5ef31ac8b4a!2sVranje%2C%20Serbia!5e0!3m2!1ssr!2srs!4v1699999999999!5m2!1ssr!2srs"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+
+    <div class="fi">
+      <div class="loc-row">
+        <div class="loc-ico">📍</div>
+        <div>
+          <div class="loc-lbl">Adresa</div>
+          <div class="loc-val">Vranje, Srbija<br>17500 Vranje</div>
+        </div>
+      </div>
+      <div class="loc-row">
+        <div class="loc-ico">🕐</div>
+        <div>
+          <div class="loc-lbl">Radno Vreme</div>
+          <div class="loc-val">Pon — Pet: 08:00 — 18:00<br>Subota: 09:00 — 15:00<br>Nedelja: Po dogovoru</div>
+        </div>
+      </div>
+      <div class="loc-row">
+        <div class="loc-ico">📞</div>
+        <div>
+          <div class="loc-lbl">Telefon</div>
+          <div class="loc-val">+381 60 000 0000</div>
+        </div>
+      </div>
+      <div class="loc-row">
+        <div class="loc-ico">📧</div>
+        <div>
+          <div class="loc-lbl">Email</div>
+          <div class="loc-val">info@unlocklab.rs</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CONTACT
+═══════════════════════════════════════ -->
+<section id="contact" class="sec sec-black">
+  <div class="sec-head fi">
+    <span class="sec-label">Kontaktirajte Nas</span>
+    <h2 class="sec-title">Zakaži <em>Termin</em></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="inner con-grid">
+
+    <div class="fi">
+      <h3 class="con-h">Razgovarajmo o<br>vašem <em>vozilu</em></h3>
+      <p class="con-p">Popunite formular ili nas kontaktirajte direktno. Odgovaramo u najkraćem mogućem roku i dogovaramo termin koji vam u potpunosti odgovara.</p>
+
+      <div class="con-row">
+        <div class="con-ico">📞</div>
+        <div><div class="con-il">Telefon</div><div class="con-iv">+381 60 000 0000</div></div>
+      </div>
+      <div class="con-row">
+        <div class="con-ico">📧</div>
+        <div><div class="con-il">Email</div><div class="con-iv">info@unlocklab.rs</div></div>
+      </div>
+      <div class="con-row">
+        <div class="con-ico">📍</div>
+        <div><div class="con-il">Lokacija</div><div class="con-iv">Vranje, Srbija</div></div>
+      </div>
+
+      <div class="socials">
+        <!-- Facebook -->
+        <a href="#" class="soc" title="Facebook" aria-label="Facebook">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <!-- Instagram -->
+        <a href="#" class="soc" title="Instagram" aria-label="Instagram">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <!-- TikTok -->
+        <a href="#" class="soc" title="TikTok" aria-label="TikTok">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+        </a>
+        <!-- YouTube -->
+        <a href="#" class="soc" title="YouTube" aria-label="YouTube">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="black"/></svg>
+        </a>
+        <!-- WhatsApp -->
+        <a href="#" class="soc" title="WhatsApp" aria-label="WhatsApp">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="form-box fi">
+      <form id="cForm" onsubmit="sendForm(event)" novalidate>
+        <div class="f-row">
+          <div class="fg">
+            <label for="fname">Ime i Prezime</label>
+            <input type="text" id="fname" name="ime" placeholder="Vaše ime" required>
+          </div>
+          <div class="fg">
+            <label for="fphone">Telefon</label>
+            <input type="tel" id="fphone" name="telefon" placeholder="+381 ...">
+          </div>
+        </div>
+        <div class="fg">
+          <label for="fcar">Vozilo</label>
+          <input type="text" id="fcar" name="vozilo" placeholder="Npr. BMW 5 Series 2023, VW Golf 8 GTI...">
+        </div>
+        <div class="fg">
+          <label for="fmsg">Poruka</label>
+          <textarea id="fmsg" name="poruka" placeholder="Opišite šta vam je potrebno..."></textarea>
+        </div>
+        <button type="submit" class="btn-send" id="sendBtn">Pošalji Upit</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-logo">UNLOCK <em>LAB</em> CAR CODING</div>
+    <div class="foot-copy">© 2026 Unlock Lab Car Coding. Sva prava zadržana.</div>
+    <div class="foot-links">
+      <a href="#about">O Nama</a>
+      <a href="#services">Usluge</a>
+      <a href="#contact">Kontakt</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── NAV SCROLL ──
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+  highlightNav();
+}, { passive: true });
+
+// ── MOBILE MENU ──
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('mob-menu').classList.add('open');
+});
+document.getElementById('mob-close').addEventListener('click', closeMob);
+function closeMob() { document.getElementById('mob-menu').classList.remove('open'); }
+
+// ── INTERSECTION OBSERVER (fade-in + stagger) ──
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fi, .stg').forEach(el => io.observe(el));
+
+// ── COUNTER ──
+let counted = false;
+const heroIo = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !counted) {
+    counted = true;
+    setTimeout(() => {
+      document.querySelectorAll('.stat-n[data-target]').forEach(el => {
+        const target = +el.dataset.target;
+        const suffix = el.dataset.suffix;
+        if (el.dataset.target === '2026') return; // static
+        let cur = 0;
+        const dur = target > 100 ? 2200 : 1600;
+        const step = target / (dur / 16);
+        const t = setInterval(() => {
+          cur = Math.min(cur + step, target);
+          el.textContent = Math.floor(cur) + suffix;
+          if (cur >= target) clearInterval(t);
+        }, 16);
+      });
+    }, 600);
+  }
+}, { threshold: 0.3 });
+heroIo.observe(document.getElementById('hero'));
+
+// ── ACTIVE NAV ──
+const sections = [...document.querySelectorAll('section[id]')];
+function highlightNav() {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 180) cur = s.id; });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+  });
+}
+
+// ── FORM ──
+function sendForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('sendBtn');
+  btn.textContent = 'Slanje...';
+  btn.style.opacity = '.7';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = '✓ Upit je poslat!';
+    btn.style.opacity = '1';
+    btn.style.background = '#fff';
+    e.target.reset();
+    setTimeout(() => {
+      btn.textContent = 'Pošalji Upit';
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 3500);
+  }, 1400);
+}
+</script>
+</body>
+</html>
