@@ -124,6 +124,26 @@ body{background:var(--black);color:var(--white);font-family:'Inter',sans-serif;o
   animation:blink 2s ease infinite;
 }
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.h-logo{
+  display:flex;align-items:center;justify-content:center;gap:18px;
+  margin-bottom:32px;
+}
+.h-logo-icon{
+  filter:drop-shadow(0 0 10px rgba(57,255,20,0.55)) drop-shadow(0 0 22px rgba(57,255,20,0.25));
+  animation:logoFloat 4s ease-in-out infinite;
+}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.h-logo-text{text-align:left}
+.h-logo-name{
+  font-family:'Montserrat',sans-serif;font-weight:900;
+  font-size:26px;letter-spacing:4px;line-height:1;
+  color:var(--white);text-transform:uppercase;
+}
+.h-logo-name em{color:var(--neon);font-style:normal}
+.h-logo-tagtext{
+  font-size:10px;letter-spacing:5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);font-weight:600;margin-top:4px;
+}
 .h-title{
   font-family:'Montserrat',sans-serif;font-weight:900;
   font-size:clamp(52px,9vw,100px);line-height:.92;
@@ -520,6 +540,41 @@ footer{
   <div class="h-scan"></div>
 
   <div class="h-content">
+    <div class="h-logo">
+      <svg class="h-logo-icon" xmlns="http://www.w3.org/2000/svg" width="76" height="76" viewBox="0 0 80 80" aria-label="Unlock Lab logo">
+        <defs>
+          <filter id="lg" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Outer octagon frame -->
+        <polygon points="24,1 56,1 79,24 79,56 56,79 24,79 1,56 1,24"
+          fill="rgba(57,255,20,0.04)" stroke="#39FF14" stroke-width="1.5" filter="url(#lg)"/>
+        <!-- Inner octagon accent -->
+        <polygon points="28,8 52,8 72,28 72,52 52,72 28,72 8,52 8,28"
+          fill="none" stroke="rgba(57,255,20,0.12)" stroke-width="1"/>
+        <!-- Corner ticks -->
+        <line x1="24" y1="1"  x2="24" y2="8"  stroke="#39FF14" stroke-width="2"/>
+        <line x1="56" y1="1"  x2="56" y2="8"  stroke="#39FF14" stroke-width="2"/>
+        <line x1="1"  y1="24" x2="8"  y2="24" stroke="#39FF14" stroke-width="2"/>
+        <line x1="1"  y1="56" x2="8"  y2="56" stroke="#39FF14" stroke-width="2"/>
+        <!-- Lock body -->
+        <rect x="22" y="40" width="36" height="26" rx="3"
+          fill="rgba(57,255,20,0.06)" stroke="#39FF14" stroke-width="1.8"/>
+        <!-- Shackle — open/unlocked (arc offset right) -->
+        <path d="M 26 40 L 26 27 Q 26 17 36 17 Q 46 17 46 27 L 46 34"
+          fill="none" stroke="#39FF14" stroke-width="1.8" stroke-linecap="round"/>
+        <!-- Keyhole circle -->
+        <circle cx="40" cy="51" r="4" fill="#39FF14"/>
+        <!-- Keyhole slot -->
+        <rect x="38.5" y="53" width="3" height="7" rx="1.5" fill="#39FF14"/>
+      </svg>
+      <div class="h-logo-text">
+        <div class="h-logo-name">UNLOCK <em>LAB</em></div>
+        <div class="h-logo-tagtext">Car Coding</div>
+      </div>
+    </div>
     <div class="h-badge"><i></i>Automotive Car Coding Lab · Vranje, Srbija</div>
     <h1 class="h-title">UNLOCK<br><em>LAB</em></h1>
     <div class="h-sub">Car Coding</div>
